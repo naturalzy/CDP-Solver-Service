@@ -1,0 +1,14 @@
+# C++ 编译产物
+*.exe
+*.o
+*.obj
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 结果文件
+result.json
+
+# 环境变量
+.env

@@ -1,0 +1,27 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [ {
+            "name": "Debug evolutionary.exe",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "D:\\song\\sqh\\sqh\\memetic_CDP_multitabu\\evolutionary.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "D:\\song\\sqh\\sqh\\memetic_CDP_multitabu",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+            // 如你的 gdb 不在环境变量，请加：
+            // "MIDebuggerPath": "C:/MinGW/bin/gdb.exe"
+        }]
+}
