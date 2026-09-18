@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from solver_wrapper import run_cdp_solver
 # 导入我们写好的数据库函数
-from database import save_task, get_task as db_get_task  
+from database import save_task, get_task as db_get_task, update_task_result 
+from celery_worker import run_cdp_task
 import uuid
 import datetime
 
@@ -15,23 +15,17 @@ class SolveRequest(BaseModel):
 
 @app.post("/solve")
 def solve(req: SolveRequest):
+    # 1. 生成任务ID
     task_id = str(uuid.uuid4())
     
-    # 1. 调用底层 C++ 求解器
-    res = run_cdp_solver(req.instance_path, req.time_limit, req.seed)
+    # 2. 立刻向 MySQL 插入一条 PENDING 记录（占坑）
+    save_task(task_id, "PENDING", None)
     
-    # 2. 存入 MySQL 数据库（直接调库，不再用内存字典）
-    save_task(task_id, res["status"], res.get("data"))
+    # 3. 把任务丢进 Celery 异步队列（毫秒级返回，不阻塞）
+    run_cdp_task.delay(req.instance_path, req.time_limit, req.seed, task_id)
     
-    # 3. 如果失败，把具体原因也返回给网页！👇 这里是我们新增的改动
-    if res["status"] == "error":
-        return {
-            "task_id": task_id, 
-            "status": "error", 
-            "message": res.get("message", "未知错误") 
-        }
-        
-    return {"task_id": task_id, "status": "success"}
+    # 4. 秒返回 task_id，用户拿着这个号去查结果
+    return {"task_id": task_id, "status": "PENDING"}
 
 @app.get("/tasks/{task_id}")
 def get_task_api(task_id: str):

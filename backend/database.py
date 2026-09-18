@@ -43,3 +43,22 @@ def get_task(task_id):
             return None
     finally:
         conn.close()
+        
+def update_task_result(task_id, status, result_data):
+    """任务完成后，更新数据库里的状态和结果"""
+    conn = pymysql.connect(**DB_CONFIG)
+    try:
+        with conn.cursor() as cursor:
+            objective = result_data.get('objective') if result_data else None
+            elapsed_time = result_data.get('elapsed_time') if result_data else None
+            solution_vector = json.dumps(result_data.get('solution_vector')) if result_data else None
+            
+            sql = """
+                UPDATE tasks 
+                SET status = %s, objective = %s, elapsed_time = %s, solution_vector = %s
+                WHERE task_id = %s
+            """
+            cursor.execute(sql, (status, objective, elapsed_time, solution_vector, task_id))
+        conn.commit()
+    finally:
+        conn.close()        
