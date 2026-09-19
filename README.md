@@ -1,5 +1,8 @@
 # CDP Solver - 组合优化求解器服务化封装
 
+## 架构图
+![架构图](./architecture.png)
+
 ## 项目简介
 本项目源于我的 CCF-C 论文《混合搜索算法求解 CDP》。为了将算法工程化落地，我将原 C++ 脚本重构为独立的计算引擎，并使用 Python FastAPI 封装成了具备数据库持久化能力的 RESTful API 服务。
 
